@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">Optali</string>
-    <string name="SLedon">- Votre Optali box est opérationnel.</string>
-    <string name="SLedperim">- Un produit va bientôt périmer. Veuillez consulter la liste de vos produits.</string>
-    <string name="SLedempty">- Votre frigo est presque vide. Pensez à aller faire des courses!</string>
-    <string name="SSpeaker">- Votre frigo est resté ouvert! Allez vite le fermer!!</string>
-</resources>
