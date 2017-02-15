@@ -4,4 +4,6 @@
     <string name="SLedperim">- Un produit va bientôt périmer. Veuillez consulter la liste de vos produits.</string>
     <string name="SLedempty">- Votre frigo est presque vide. Pensez à aller faire des courses!</string>
     <string name="SSpeaker">- Votre frigo est resté ouvert! Allez vite le fermer!!</string>
+    <string name="turn_on_flashlight"> Jour! </string>
+    <string name="turn_off_flashlight"> Nuit! </string>
 </resources>

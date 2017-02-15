@@ -1,1 +1,10 @@
 include ':app'
+
+
+// Rajout pour zxing essai
+include ':zxing-android'
+include ':zxing-android-complete'
+include ':zxing-android-legacy'
+include ':integration'
+include ':sample'
+include ':sample-nosupport'
