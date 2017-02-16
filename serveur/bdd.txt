@@ -1,0 +1,33 @@
+createdb Optali_db
+
+// Format DATE : 'aaaa-mm-dd'
+
+CREATE TABLE Date(
+    IdDate INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Date DATE,
+    NbDate integer DEFAULT '1'
+);
+
+
+CREATE TABLE Product(
+    IdProduct INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Product varchar (70) NOT NULL,
+    NbProdIn integer DEFAULT '1',
+    NbProdBought integer DEFAULT '1'
+);    
+
+CREATE TABLE Recipe(
+    IdRecipe INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Recipe varchar (70) NOT NULL,
+);    
+
+
+CREATE TABLE Unity(
+    IdDate INTEGER UNSIGNED FOREIGN KEY,
+    IdProduct INTEGER UNSIGNED FOREIGN KEY,
+);
+
+CREATE TABLE ListProduct(
+    IdRecipe INTEGER UNSIGNED FOREIGN KEY,
+    IdProduct INTEGER UNSIGNED FOREIGN KEY,
+);
