@@ -1,6 +1,9 @@
-createdb Optali_db
+create database Optali_db character set 'utf8';
+use Optali_db;
 
 // Format DATE : 'aaaa-mm-dd'
+mysql -h localhost -u root -p
+
 
 CREATE TABLE Date(
     IdDate INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -18,16 +21,53 @@ CREATE TABLE Product(
 
 CREATE TABLE Recipe(
     IdRecipe INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Recipe varchar (70) NOT NULL,
+    Recipe varchar (70) NOT NULL
 );    
 
 
 CREATE TABLE Unity(
-    IdDate INTEGER UNSIGNED FOREIGN KEY,
-    IdProduct INTEGER UNSIGNED FOREIGN KEY,
+    IdUnity INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    IdDate INTEGER UNSIGNED,
+    IdProduct INTEGER UNSIGNED,
+    FOREIGN KEY (IdDate)
+    REFERENCES Date(IdDate)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL,
+    FOREIGN KEY (IdProduct)
+    REFERENCES Product(IdProduct)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL
 );
 
 CREATE TABLE ListProduct(
-    IdRecipe INTEGER UNSIGNED FOREIGN KEY,
-    IdProduct INTEGER UNSIGNED FOREIGN KEY,
+    IdListProduct INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    IdRecipe INTEGER UNSIGNED,
+    IdProduct INTEGER UNSIGNED,
+    FOREIGN KEY (IdRecipe)
+    REFERENCES Recipe(IdRecipe)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL,
+    FOREIGN KEY (IdProduct)
+    REFERENCES Product(IdProduct)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL
 );
+
+// Aide modification table
+ALTER TABLE nom_table ADD ... -- permet d'ajouter quelque chose (une colonne par exemple)
+ALTER TABLE nom_table DROP ... -- permet de retirer quelque chose 
+ALTER TABLE nom_table CHANGE ...
+ALTER TABLE nom_table MODIFY ... -- permettent de modifier une colonne
+
+// Aide insertion
+INSERT INTO Animal 
+VALUES (1, 'chien', 'M', '2010-04-05 13:43:00', 'Rox', 'Mordille beaucoup');
+
+SELECT * FROM Animal;
+
+show tables;
+describe Date;
+
+
+
+
