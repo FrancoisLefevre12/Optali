@@ -3,6 +3,7 @@
 <?php
 
 require "init.php";
+echo '<br>Page post!!<br>';
 
 $Product=$_Post["Product"];
 $Date=$_Post["Date"];
@@ -59,12 +60,12 @@ $sql="SELECT IdProduct FROM Product where Product='".$Product."';";
 $IdProduct= mysql_query($con,$sql);
 
 // On regarde s'il n'existe déjà pas un produit avec la même date de péremption
-$sql="SELECT * FROM Unity where (IdDate='".$IdDate."' AND IdProduct='"$IdProduct"');";
+$sql="SELECT * FROM Unity where (IdDate='".$IdDate."' AND IdProduct='".$IdProduct."');";
 $result= mysql_query($con,$sql);
 
 if(mysqli_num_rows($result)>0)
 {
-	$sql="UPDATE Unity SET NbUnity = NbUnity+1 WHERE (IdDate='".$IdDate."' AND IdProduct='"$IdProduct"');";
+	$sql="UPDATE Unity SET NbUnity = NbUnity+1 WHERE (IdDate='".$IdDate."' AND IdProduct='".$IdProduct."');";
 	$result= mysql_query($con,$sql);
 }
 else

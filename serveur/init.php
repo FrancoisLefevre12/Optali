@@ -1,22 +1,33 @@
-<!-- Merci à Prabeesh pour son tuto sur php et volley -->
-<!-- Page d'accès à la database -->
-
 <?php
 
-$host="http://192.168.1.1";
-$db_user="alex";
-$db_password="password";
+//Merci à Prabeesh pour son tuto sur php et volley
+//Page d'accès à la database 
+// Wow wow wow toutes les erreurs sont dans /var/log/apache2/error.log
+
+echo
+'<html>
+<h1>Bienvenue</h1>
+
+<br>
+Page init de la bdd.
+</html>';
+
+
+$host="localhost";
+$db_user="root";
+$db_password="Sql#test";
 $db_name="Optali_db";
 
 $con = mysqli_connect($host,$db_user,$db_password,$db_name);
 
 if($con)
 {
-	echo "C'est un succès!"
+	echo "<br>C'est un succès!";
 }
 else 
 {
-	echo "C'est un echec!"
+	echo "<br>echo C'est un echec!";
 }
-//mysqli_close($con);
+mysqli_close($con);
+
 ?>
