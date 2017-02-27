@@ -8,3 +8,7 @@ include ':zxing-android-legacy'
 include ':integration'
 include ':sample'
 include ':sample-nosupport'
+
+// Rajout de tesseract
+include ':tess-two'
+include ':libraries:tess-two'
