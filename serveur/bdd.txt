@@ -60,14 +60,35 @@ ALTER TABLE nom_table DROP ... -- permet de retirer quelque chose
 ALTER TABLE nom_table CHANGE ...
 ALTER TABLE nom_table MODIFY ... -- permettent de modifier une colonne
 
+delete from Date where IdDate=1;
+
 // Aide insertion
-INSERT INTO Animal 
-VALUES (1, 'chien', 'M', '2010-04-05 13:43:00', 'Rox', 'Mordille beaucoup');
+insert into Date (Date) values('2017-04-15');
+insert into Product (Product, NbProdIn, NbProdBought) values('Salade','1','1');
+insert into Unity (idDate,idProduct,NbUnity) values(1,1,1);
+insert into Recipe (Recipe) values ('Pate à la salade');
+
+UPDATE Product SET NbProdIn = NbProdIn+1 WHERE Product='Riz';
 
 SELECT * FROM Animal;
 
 show tables;
 describe Date;
+
+------ Requêtes à effectuer -----
+
+Tous les produits triés par dates
+
+select Product.Product,Date.Date,Product.NbProdIn from Product left join (Unity,Date) ON (Unity.IdProduct=Product.IdProduct AND Unity.IdDate=Date.IdDate) Order By Date;
+
+Tous les produits triés par nombres dans le frigo.
+
+select Product.Product,Date.Date,Product.NbProdIn from Product left join (Unity,Date) ON (Unity.IdProduct=Product.IdProduct AND Unity.IdDate=Date.IdDate) Order By NbProdIn;
+
+Tous les aliments d'une recette
+
+select Product AS Ingrédients from Product left join (ListProduct,Recipe) on (ListProduct.IdRecipe=Recipe.IdRecipe and ListProduct.IdProduct=Product.IdProduct) where Recipe.IdRecipe=1;
+
 
 
 
