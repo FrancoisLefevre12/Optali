@@ -28,13 +28,24 @@ public class MainActivity extends AppCompatActivity {
 
         // Mise en place du bouton ajout page
         Button buttonAjout = (Button) findViewById(R.id.ajoutPage);
-        buttonAjout.setOnClickListener(new View.OnClickListener() {
 
+        buttonAjout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent i = new Intent(getApplicationContext(),AjoutActivity.class);
                 startActivity(i);
+            }
+        });
+
+        // Mise en place du bouton liste Ingredient
+        Button buttonList = (Button) findViewById(R.id.listeIngredient);
+
+        buttonList.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent i2= new Intent(getApplicationContext(),ListeActivity.class);
+                startActivity(i2);
             }
         });
 
