@@ -23,7 +23,7 @@
 
         <Button
             android:id="@+id/suppr"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -35,8 +35,8 @@
         <Button
             android:id="@+id/recherche_recette"
             android:textSize="12dip"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -48,7 +48,7 @@
             android:id="@+id/recherche_produit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="15dp"
             android:layout_gravity="bottom"
             android:layout_weight="33"
             android:textSize="16dip"
@@ -164,7 +164,5 @@
         </ScrollView>
 
     </LinearLayout>
-
-
 
 </LinearLayout>
