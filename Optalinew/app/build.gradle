@@ -29,4 +29,5 @@ dependencies {
     compile 'com.rmtheis:tess-two:6.0.3'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }
