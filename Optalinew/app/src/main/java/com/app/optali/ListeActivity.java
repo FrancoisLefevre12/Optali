@@ -4,11 +4,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,12 +41,8 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     private RadioButton radioHisto;
     private RadioButton radioSuppr;
 
-    private ListView listView;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    String[] prenoms=new String[]{"Jean","Patrick","Pascal","Rodolphou"};
+    private TableLayout tableLayout;
+    private CheckBox[] checkBox;
 
 
     @Override
@@ -78,11 +76,24 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         radioSuppr = (RadioButton) findViewById(R.id.triSuppr);
         radioSuppr.setOnClickListener(this);
 
+        tableLayout = (TableLayout) findViewById(R.id.table);
+        checkBox = new CheckBox[100];
 
-        listView = (ListView) findViewById(R.id.list_ing);
-        // String à changer on doit mettre 5 string
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ListeActivity.this, android.R.layout.simple_list_item_1,prenoms);
-        listView.setAdapter(adapter);}
+        createRow("Pizzaaa","2017-04-12","3","5",0);
+        createRow("Riz","2017-04-12","3","4",1);
+        createRow("semoule","2017-05-12","3","5",2);
+        createRow("taboulé","2017-01-10","2","7",3);
+        createRow("Pizzaaa","2017-04-18","1","5",4);
+        createRow("semoule","2017-05-12","3","4",5);
+        createRow("taboulé","2017-01-10","2","6",6);
+        createRow("Pizzaaa","2017-04-18","1","5",7);
+        createRow("semoule","2017-05-12","3","2",8);
+        createRow("taboulé","2017-01-10","2","5",9);
+        createRow("Pizzaaa","2017-04-18","1","5",10);
+
+    }
+
+
 
 /*
         // Volley prepare la requete
@@ -112,6 +123,45 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         if (v.getId() == R.id.suppr) {
         }
 
+    }
+
+
+    public void createRow(String s1, String s2, String s3, String s4, int nbre){
+        // On crée une ligne avec les paramètres match_parent
+        final TableRow tableRow = new TableRow (this);
+        tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+
+        // Création d'un textView du nom
+        final TextView tProduct = new TextView(this);
+        tProduct.setText(s1);
+        tProduct.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+
+        // Création d'un textView de la date
+        final TextView tDate = new TextView(this);
+        tDate.setText(s2);
+        tDate.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+
+        // Création d'un textView du Stock
+        final TextView tStock= new TextView(this);
+        tStock.setText(s3);
+        tStock.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+
+        // Création d'un textView de l'historique
+        final TextView tHisto= new TextView(this);
+        tHisto.setText(s3);
+        tHisto.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+
+        // Création d'un Checkbox
+        checkBox[nbre]= new CheckBox(this);
+        tHisto.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+
+        tableRow.addView(tProduct);
+        tableRow.addView(tDate);
+        tableRow.addView(tStock);
+        tableRow.addView(tHisto);
+        tableRow.addView(checkBox[nbre]);
+
+        tableLayout.addView(tableRow);
     }
 
 }
