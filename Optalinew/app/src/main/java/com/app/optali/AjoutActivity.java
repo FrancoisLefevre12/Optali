@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class AjoutActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String REGISTER_URL = "http://89.80.34.165/post.php";
+    public static final String REGISTER_URL = "http://89.80.34.165/optali/post.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
 

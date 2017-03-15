@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="50"
-            android:hint="Code barre"
+            android:hint="Produit"
             android:textSize="30dip" />
 
 
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="50"
-            android:hint="Date produit"
+            android:hint="aaaa-mm-jj"
             android:textSize="30dip" />
 
 

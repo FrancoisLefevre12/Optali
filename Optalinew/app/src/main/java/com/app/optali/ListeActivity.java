@@ -1,46 +1,60 @@
 package com.app.optali;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String REGISTER_URL = "http://89.80.34.165/get.php";
+    public static final String REGISTER_URL = "http://89.80.34.165/optali/get.php";
     public static final String KEY_ORDER = "OrderBy";
     public static final String KEY_SEARCH = "Search";
+    public int nbre;
 
 
     private Button bSuppr;
     private Button bFindRecipe;
     private EditText eFindProduct;
+
+    private RadioGroup radioGroup;
     private RadioButton radioName;
     private RadioButton radioDate;
     private RadioButton radioStock;
     private RadioButton radioHisto;
     private RadioButton radioSuppr;
 
+
+    private String rech;
+    private String intRadio;
     private TableLayout tableLayout;
     private CheckBox[] checkBox;
 
@@ -50,7 +64,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_alim);
 
-
+        nbre=0;
         // Initialisation buttons
         bSuppr = (Button) findViewById(R.id.suppr);
         bSuppr.setOnClickListener(this);
@@ -61,6 +75,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         eFindProduct = (EditText) findViewById(R.id.recherche_produit);
 
         // Initialisation RadioButton
+        radioGroup = (RadioGroup) findViewById(R.id.rdGroup);
         radioName = (RadioButton) findViewById(R.id.triNom);
         radioName.setOnClickListener(this);
 
@@ -91,31 +106,58 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         createRow("taboulé","2017-01-10","2","5",9);
         createRow("Pizzaaa","2017-04-18","1","5",10);
 
-    }
+        // A chaque changement de text, faire la requête
+        eFindProduct.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //Rien a faire
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //Rien a faire
+            }
 
+            @Override
+            public void afterTextChanged(Editable s) {
+                rech=eFindProduct.getText().toString();
+                sendData();
+            }
+        });
 
-/*
-        // Volley prepare la requete
-        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, REGISTER_URL, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject reponse) {
-                        log.d("Reponse", reponse.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+        // A chaque changement de radiobouton, faire la requete.
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                    }
+                if(checkedId==R.id.triNom){
+                    intRadio="0";
                 }
-        );
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(getRequest);
+                if(checkedId==R.id.triDate){
+                    intRadio="1";
+                }
+
+                if(checkedId==R.id.triStock){
+                    intRadio="2";
+                }
+
+                if(checkedId==R.id.trihisto){
+                    intRadio="3";
+                }
+
+                if(checkedId==R.id.triSuppr){
+                    checkall();
+                }
+                sendData();
+            }
+        });
     }
-*/
+
+
+    // méthodes
+    public void checkall(){
+    }
 
     public void onClick(View v) {
 
@@ -124,6 +166,49 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
+
+    public void sendData(){
+        JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.POST, REGISTER_URL, (String)null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                    int count=0;
+                        while(count<response.length()){
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(count);
+                                Produit produit = new Produit(jsonObject.getString("sProduct"),jsonObject.getString("sDate"),jsonObject.getString("sStock"),jsonObject.getString("sHisto"));
+                                createRow(produit.nom,produit.date,produit.stock,produit.historique,nbre);
+                                nbre++;
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ListeActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
+                    }
+                }
+
+        ){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put(KEY_SEARCH,rech);
+                params.put(KEY_ORDER,intRadio);
+                return params;
+            }
+
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
 
 
     public void createRow(String s1, String s2, String s3, String s4, int nbre){
@@ -163,5 +248,8 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
         tableLayout.addView(tableRow);
     }
+
+
+
 
 }
