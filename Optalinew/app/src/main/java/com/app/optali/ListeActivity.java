@@ -29,8 +29,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -58,11 +60,14 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     private TableLayout tableLayout;
     private CheckBox[] checkBox;
 
+    protected List<Produit> array;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_alim);
+
+        array = new ArrayList<Produit>();
 
         nbre=0;
         // Initialisation buttons
@@ -94,6 +99,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         tableLayout = (TableLayout) findViewById(R.id.table);
         checkBox = new CheckBox[100];
 
+        /*
         createRow("Pizzaaa","2017-04-12","3","5",0);
         createRow("Riz","2017-04-12","3","4",1);
         createRow("semoule","2017-05-12","3","5",2);
@@ -104,7 +110,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         createRow("Pizzaaa","2017-04-18","1","5",7);
         createRow("semoule","2017-05-12","3","2",8);
         createRow("taboulé","2017-01-10","2","5",9);
-        createRow("Pizzaaa","2017-04-18","1","5",10);
+        createRow("Pizzaaa","2017-04-18","1","5",10);*/
 
         // A chaque changement de text, faire la requête
         eFindProduct.addTextChangedListener(new TextWatcher() {
@@ -169,6 +175,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void sendData(){
+        array.clear();
         JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.POST, REGISTER_URL, (String)null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -178,8 +185,10 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                             try {
                                 JSONObject jsonObject = response.getJSONObject(count);
                                 Produit produit = new Produit(jsonObject.getString("sProduct"),jsonObject.getString("sDate"),jsonObject.getString("sStock"),jsonObject.getString("sHisto"));
-                                createRow(produit.nom,produit.date,produit.stock,produit.historique,nbre);
+                                createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
                                 nbre++;
+                                count++;
+                                array.add(produit);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -195,18 +204,8 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                     }
                 }
 
-        ){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put(KEY_SEARCH,rech);
-                params.put(KEY_ORDER,intRadio);
-                return params;
-            }
-
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(jsonArrayRequest);
+        );
+        MySingleton.getInstance(ListeActivity.this).addToRequestQueue(jsonArrayRequest);
     }
 
 

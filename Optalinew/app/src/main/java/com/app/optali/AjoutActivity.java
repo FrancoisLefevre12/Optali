@@ -154,9 +154,7 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
                 params.put(KEY_PRODUCT,product);
-                System.out.println(product);
                 params.put(KEY_DATE,date);
-                System.out.println(date);
                 return params;
             }
 

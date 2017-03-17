@@ -11,10 +11,10 @@ public class Produit {
     protected String historique;
 
     public Produit(String nom, String date, String stock, String historique){
-        this.nom=nom;
-        this.date=date;
-        this.stock=stock;
-        this.historique=historique;
+        this.setNom(nom);
+        this.setDate(date);
+        this.setStock(stock);
+        this.setHistorique(historique);
     }
 
 
