@@ -1,23 +1,21 @@
 package com.app.optali;
 
 import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-// Import de la librairie zxing (lecture code barre)
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 // Import lecteur de caractère
 import android.os.Environment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
+import android.content.ActivityNotFoundException;
 import android.media.ExifInterface;
 import android.util.Log;
 import java.io.File;
@@ -26,6 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import com.googlecode.tesseract.android.TessBaseAPI;
+
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 // Import pour l'envoie vers le serveur
 import com.android.volley.toolbox.Volley;
@@ -53,13 +54,15 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
     private EditText EditTextDate;
     // Quand false alors appel à la première caméra sinon la deuxième
 
-    /*
+
     // Variables dont on a l'air d'avoir besoin pour la détection de caractères
-    public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString()+"/AjoutActivity/";
+    public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString()+"/AjoutActivity/tesseract/";
+    //public static final String DATA_PATH = "/mnt/sdcard/tesseract/";
     public static final String TAG="AjoutActivity.java";
     public static final String lang="fra";
-    String path= DATA_PATH+"/ocr.jpg";
-*/
+    public String path= DATA_PATH+"ocr.jpg";
+    private static final String EXPECTED_FILE=DATA_PATH + "tessdata/" + lang + ".traineddata";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,54 +83,36 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
         EditTextProduct = (EditText) findViewById(R.id.code_barre);
         EditTextDate = (EditText) findViewById(R.id.date_etiquette);
 
+        runFile();
 
-        /*
-        // Creation d'un dossier et donc fichier image pour faire la lecture de caractère par la suite.
-        String[] paths =new String[] {DATA_PATH,DATA_PATH+"tessdata/"};
-
-        for(String path : paths){
-            File dir=new File(path);
-        }
-
-
-        if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists()) {
-            try {
-                AssetManager assetManager = getAssets();
-                InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
-                OutputStream out = new FileOutputStream(DATA_PATH
-                        + "tessdata/" + lang + ".traineddata");
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-                Log.v(TAG, "Copied " + lang + " traineddata");
-            } catch (IOException e) {
-                Log.e(TAG, "Unable to copy " + lang + " traineddata " + e.toString());
-            }
-        }*/
     }
 
     public void onClick(View v) {
 
         if(v.getId() == R.id.camera_code){
-            // On pose switchCam=false
+            // On interagit avec EditTextProduit
+            Toast.makeText(AjoutActivity.this,"Veuillez scanner votre nom de produit",Toast.LENGTH_LONG).show();
             switchCam=false;
-            // on lance le scanner au clic sur notre bouton
-            new IntentIntegrator(this).initiateScan();
+            startCameraActivity();
+
         }
 
         if(v.getId() == R.id.camera_date){
-            // On pose switchCam=true
+            // On interagit avec EditTextDate
+            Toast.makeText(AjoutActivity.this,"Veuillez scanner votre date de péremption",Toast.LENGTH_LONG).show();
             switchCam=true;
-            // on lance le scanner au clic sur notre bouton
+            startCameraActivity();
+
 
         }
 
         if(v.getId() == R.id.envoi_ajout){
-            sendData();
+            if (EditTextProduct.getText().toString()==""){
+                Toast.makeText(AjoutActivity.this,"Veuillez rentrer votre nom de produit",Toast.LENGTH_LONG).show();
+            }
+            else{
+                sendData();
+            }
         }
 
     }
@@ -163,34 +148,117 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
         requestQueue.add(stringRequest);
     }
 
+
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        //if (switchCam=false){ //camera 1
 
-            IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-            if (scanningResult != null) {
-                // nous récupérons le contenu du code barre
-                String scanContent = scanningResult.getContents();
-                TextView scan_content = (TextView) findViewById(R.id.code_barre);
+            Log.i(TAG, "resultCode: " + resultCode);
 
-                // nous affichons le résultat dans nos TextView
-                scan_content.setText(scanContent);
+            if (resultCode == -1) {
+                if (requestCode == 0) // Camera capture
+                {
+                    File file = new File(path);
+                    performCrop(Uri.fromFile(file));
+
+                }
             }
-            else{
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Aucune donnée reçu!", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        }
-        //else { //Camera deux
 
-        //}
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+            {
+                CropImage.ActivityResult result = CropImage.getActivityResult(intent);
+                if (resultCode == RESULT_OK)
+                {
+                    //On fait appelle au moteur de reconnaissance de caractère
+                    onPhotoTaken();
+
+                }
+                else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
+                {
+                    Exception error = result.getError();
+                }
+            } else {
+                Log.v(TAG, "User cancelled");
+            }
+
+
     }
 
-    /*
+
+    // Méthodes pour lancer la reconnaissance de caractères
+    protected void startCameraActivity() {
+        File file = new File(path);
+        Uri outputFileUri = Uri.fromFile(file);
+
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        intent.putExtra("return-data", true);
+
+        startActivityForResult(intent, 0);
+    }
+
+
+    protected void runFile(){
+        // Creation d'un dossier et donc fichier image pour faire la lecture de caractère par la suite.
+        String[] paths =new String[] {DATA_PATH,DATA_PATH+"tessdata/"};
+
+        for(String path : paths){
+            File dir=new File(path);
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
+                    return;
+                } else {
+                    Log.v(TAG, "Created directory " + path + " on sdcard");
+                }
+            }
+        }
+
+        if (!(new File(EXPECTED_FILE)).exists()) {
+
+            try {
+                AssetManager assetManager = getAssets();
+                InputStream in = assetManager.open(DATA_PATH+"tessdata/" + lang + ".traineddata");
+                OutputStream out = new FileOutputStream(EXPECTED_FILE);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+                Log.v(TAG, "Copied " + lang + " traineddata");
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to copy " + lang + " traineddata " + e.toString());
+            }
+        }
+    }
+
+    protected void performCrop(Uri data)
+    {
+
+        File file = new File(path);
+        try
+        {
+            CropImage.activity(data)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setOutputUri(Uri.fromFile(file))
+                    .start(this);
+
+        }
+
+        catch(ActivityNotFoundException e)
+        {
+            String errorMessage = "Whoops - your device doesn't support the crop action!";
+            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+
+
     protected void onPhotoTaken(){
 
-        // Aide fitou
         BitmapFactory.Options options=new BitmapFactory.Options();
         options.inSampleSize=4;
         Bitmap bitmap=BitmapFactory.decodeFile(path,options);
@@ -249,7 +317,31 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
         recognizedText = baseApi.getUTF8Text();
         baseApi.end();
 
+        // You now have the text in recognizedText var, you can do anything with it.
+        // We will display a stripped out trimmed alpha-numeric version of it (if lang is eng)
+        // so that garbage doesn't make it to the display.
+
+        Log.v(TAG, "OCRED TEXT: " + recognizedText);
+
+        if ( lang.equalsIgnoreCase("en") ) {
+            recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", " ");
+        }
+
+       recognizedText = recognizedText.trim();
+
+        if ( recognizedText.length() != 0 ) {
+            if (!switchCam){
+                EditTextProduct.setText(recognizedText);
+                EditTextProduct.setSelection(EditTextProduct.getText().toString().length());
+            }
+            else{
+               EditTextDate.setText(recognizedText);
+               EditTextDate.setSelection(EditTextDate.getText().toString().length());
+            }
+
+        }
+
     }
 
 
-}*/
+}

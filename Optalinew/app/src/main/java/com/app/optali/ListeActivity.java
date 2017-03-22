@@ -16,30 +16,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String REGISTER_URL = "http://89.80.34.165/optali/get.php";
-    public static final String KEY_ORDER = "OrderBy";
-    public static final String KEY_SEARCH = "Search";
     public int nbre;
 
 
@@ -60,14 +48,14 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     private TableLayout tableLayout;
     private CheckBox[] checkBox;
 
-    protected List<Produit> array;
+    //protected List<Produit> array;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_alim);
 
-        array = new ArrayList<Produit>();
+        //array = new ArrayList<Produit>();
 
         nbre=0;
         // Initialisation buttons
@@ -112,6 +100,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         createRow("taboulé","2017-01-10","2","5",9);
         createRow("Pizzaaa","2017-04-18","1","5",10);*/
 
+        sendData();
         // A chaque changement de text, faire la requête
         eFindProduct.addTextChangedListener(new TextWatcher() {
             @Override
@@ -175,27 +164,30 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void sendData(){
-        array.clear();
+        //array.clear();
+
         JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.POST, REGISTER_URL, (String)null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                    int count=0;
-                        while(count<response.length()){
+                    nbre=0;
+
+                        while(nbre<response.length()){
                             try {
-                                JSONObject jsonObject = response.getJSONObject(count);
+                                JSONObject jsonObject = response.getJSONObject(nbre);
                                 Produit produit = new Produit(jsonObject.getString("sProduct"),jsonObject.getString("sDate"),jsonObject.getString("sStock"),jsonObject.getString("sHisto"));
                                 createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
                                 nbre++;
-                                count++;
-                                array.add(produit);
+                                //array.add(produit);
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                Toast.makeText(ListeActivity.this,"Bonjouuuur",Toast.LENGTH_LONG).show();
                             }
                         }
 
                     }
-                },
+                }   ,
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -206,6 +198,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
         );
         MySingleton.getInstance(ListeActivity.this).addToRequestQueue(jsonArrayRequest);
+
     }
 
 
@@ -232,7 +225,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
         // Création d'un textView de l'historique
         final TextView tHisto= new TextView(this);
-        tHisto.setText(s3);
+        tHisto.setText(s4);
         tHisto.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
 
         // Création d'un Checkbox

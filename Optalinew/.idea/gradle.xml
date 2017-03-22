@@ -16,9 +16,6 @@
             <option value="$PROJECT_DIR$/sample" />
             <option value="$PROJECT_DIR$/sample-nosupport" />
             <option value="$PROJECT_DIR$/tess-two" />
-            <option value="$PROJECT_DIR$/zxing-android" />
-            <option value="$PROJECT_DIR$/zxing-android-complete" />
-            <option value="$PROJECT_DIR$/zxing-android-legacy" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

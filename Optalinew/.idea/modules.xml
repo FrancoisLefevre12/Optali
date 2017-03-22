@@ -10,9 +10,6 @@
       <module fileurl="file://$PROJECT_DIR$/libraries/tess-two/libraries-tess-two.iml" filepath="$PROJECT_DIR$/libraries/tess-two/libraries-tess-two.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample-nosupport/sample-nosupport.iml" filepath="$PROJECT_DIR$/sample-nosupport/sample-nosupport.iml" />
-      <module fileurl="file://$PROJECT_DIR$/zxing-android/zxing-android.iml" filepath="$PROJECT_DIR$/zxing-android/zxing-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/zxing-android-complete/zxing-android-complete.iml" filepath="$PROJECT_DIR$/zxing-android-complete/zxing-android-complete.iml" />
-      <module fileurl="file://$PROJECT_DIR$/zxing-android-legacy/zxing-android-legacy.iml" filepath="$PROJECT_DIR$/zxing-android-legacy/zxing-android-legacy.iml" />
     </modules>
   </component>
 </project>
