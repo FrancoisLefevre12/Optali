@@ -1,0 +1,38 @@
+------------------------------------------------------------------------------------------
+Gerber File Extension Report For: Proto.GBR   22/03/2017  14:51:08
+------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------
+Layer Extension     Layer Description                      
+------------------------------------------------------------------------------------------
+.GTL                Top Layer                               
+.GP1                Internal Plane 1                        
+.GP2                Internal Plane 2                        
+.GBL                Bottom Layer                            
+.GTP                Top Paste                               
+.GTO                Top Overlay                             
+.GTS                Top Solder                              
+.GBS                Bottom Solder                           
+.GBO                Bottom Overlay                          
+.GBP                Bottom Paste                            
+.GKO                Keep-Out Layer                          
+.GM1                Mechanical 1                            
+.GM2                Mechanical 2                            
+.GM3                Mechanical 3                            
+.GM4                Mechanical 4                            
+.GM5                Mechanical 5                            
+.GM6                Mechanical 6                            
+.GM7                Mechanical 7                            
+.GM8                Mechanical 8                            
+.GM9                Mechanical 9                            
+.GM10               Mechanical 10                           
+.GM11               Mechanical 11                           
+.GM12               Mechanical 12                           
+.GM13               Mechanical 13                           
+.GM14               Mechanical 14                           
+.GM15               Mechanical 15                           
+.GM16               Mechanical 16                           
+.GML                Multi-Layer                             
+.1                  Dielectric 1                            
+------------------------------------------------------------------------------------------

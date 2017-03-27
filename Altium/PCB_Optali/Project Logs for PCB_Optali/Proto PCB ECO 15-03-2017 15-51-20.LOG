@@ -1,0 +1,13 @@
+Added Component: Designator=Res4(RESC1608X06M)
+Add component. Clean all parameters for all variants
+Added Component: Designator=Res5(RESC1608X06M)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=NetA1_10 Pin=Res4-2
+Added Pin To Net: NetName=NetA1_2 Pin=Res5-2
+Added Pin To Net: NetName=NetA1_8 Pin=A1-8
+Added Pin To Net: NetName=NetA1_8 Pin=Res4-1
+Added Pin To Net: NetName=NetA1_8 Pin=Res5-1
+Added Net: Name=NetA1_8
+Added Member To Class: ClassName=Proto Member=Component Res4 res 1Kohms 0603 CMS
+Added Member To Class: ClassName=Proto Member=Component Res5 res 1Kohms 0603 CMS
+Added Room: Name=Proto

@@ -1,0 +1,358 @@
+*************************************************************
+FileName = Proto.GBR
+AutoAperture = True
+*************************************************************
+Generating : Top Layer
+      File : Proto.GTL
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+    D15
+    D16
+    D17
+    D18
+*************************************************************
+
+*************************************************************
+Generating : Internal Plane 1
+      File : Proto.GP1
+
+    Adding Layer      : Internal Plane 1
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D19
+    D20
+*************************************************************
+
+*************************************************************
+Generating : Internal Plane 2
+      File : Proto.GP2
+
+    Adding Layer      : Internal Plane 2
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D19
+    D20
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : Proto.GBL
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D16
+    D17
+    D18
+*************************************************************
+
+*************************************************************
+Generating : Top Paste
+      File : Proto.GTP
+
+    Adding Layer      : Top Paste
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+*************************************************************
+
+*************************************************************
+Generating : Top Overlay
+      File : Proto.GTO
+
+    Adding Layer      : Top Overlay
+
+
+Used DCodes :
+    D15
+    D21
+    D22
+    D23
+*************************************************************
+
+*************************************************************
+Generating : Top Solder
+      File : Proto.GTS
+
+    Adding Layer      : Top Solder
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+*************************************************************
+
+*************************************************************
+Generating : Bottom Solder
+      File : Proto.GBS
+
+    Adding Layer      : Bottom Solder
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D28
+    D29
+    D30
+*************************************************************
+
+*************************************************************
+Generating : Bottom Overlay
+      File : Proto.GBO
+
+    Adding Layer      : Bottom Overlay
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Bottom Paste
+      File : Proto.GBP
+
+    Adding Layer      : Bottom Paste
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Keep-Out Layer
+      File : Proto.GKO
+
+    Adding Layer      : Keep-Out Layer
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 1
+      File : Proto.GM1
+
+    Adding Layer      : Mechanical 1
+
+
+Used DCodes :
+    D23
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 2
+      File : Proto.GM2
+
+    Adding Layer      : Mechanical 2
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 3
+      File : Proto.GM3
+
+    Adding Layer      : Mechanical 3
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 4
+      File : Proto.GM4
+
+    Adding Layer      : Mechanical 4
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 5
+      File : Proto.GM5
+
+    Adding Layer      : Mechanical 5
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 6
+      File : Proto.GM6
+
+    Adding Layer      : Mechanical 6
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 7
+      File : Proto.GM7
+
+    Adding Layer      : Mechanical 7
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 8
+      File : Proto.GM8
+
+    Adding Layer      : Mechanical 8
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 9
+      File : Proto.GM9
+
+    Adding Layer      : Mechanical 9
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 10
+      File : Proto.GM10
+
+    Adding Layer      : Mechanical 10
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 11
+      File : Proto.GM11
+
+    Adding Layer      : Mechanical 11
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 12
+      File : Proto.GM12
+
+    Adding Layer      : Mechanical 12
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 13
+      File : Proto.GM13
+
+    Adding Layer      : Mechanical 13
+
+
+Used DCodes :
+    D21
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 14
+      File : Proto.GM14
+
+    Adding Layer      : Mechanical 14
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 15
+      File : Proto.GM15
+
+    Adding Layer      : Mechanical 15
+
+
+Used DCodes :
+    D21
+    D31
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 16
+      File : Proto.GM16
+
+    Adding Layer      : Mechanical 16
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Multi-Layer
+      File : Proto.GML
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D16
+    D17
+    D18
+*************************************************************
+
+*************************************************************
+Generating : Dielectric 1
+      File : Proto.1
+
+    Adding Layer      : Dielectric 1
+
+
+Used DCodes :
+*************************************************************
+
