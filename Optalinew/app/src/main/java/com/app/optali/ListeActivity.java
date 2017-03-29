@@ -25,6 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String REGISTER_URL = "http://89.80.34.165/optali/get.php";
@@ -44,18 +48,18 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
 
     private String rech;
-    private String intRadio;
+    private int intRadio;
     private TableLayout tableLayout;
     private CheckBox[] checkBox;
 
-    //protected List<Produit> array;
+    protected List<Produit> arrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_alim);
 
-        //array = new ArrayList<Produit>();
+        arrayList = new ArrayList<Produit>();
 
         nbre=0;
         // Initialisation buttons
@@ -87,21 +91,11 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         tableLayout = (TableLayout) findViewById(R.id.table);
         checkBox = new CheckBox[100];
 
-        /*
-        createRow("Pizzaaa","2017-04-12","3","5",0);
-        createRow("Riz","2017-04-12","3","4",1);
-        createRow("semoule","2017-05-12","3","5",2);
-        createRow("taboulé","2017-01-10","2","7",3);
-        createRow("Pizzaaa","2017-04-18","1","5",4);
-        createRow("semoule","2017-05-12","3","4",5);
-        createRow("taboulé","2017-01-10","2","6",6);
-        createRow("Pizzaaa","2017-04-18","1","5",7);
-        createRow("semoule","2017-05-12","3","2",8);
-        createRow("taboulé","2017-01-10","2","5",9);
-        createRow("Pizzaaa","2017-04-18","1","5",10);*/
-
+        // Récupération du tableau de produit
         sendData();
-        // A chaque changement de text, faire la requête
+
+
+        // A chaque changement de text, actualiser la liste
         eFindProduct.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -116,56 +110,94 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void afterTextChanged(Editable s) {
                 rech=eFindProduct.getText().toString();
-                sendData();
+                refreshList();
             }
         });
 
-        // A chaque changement de radiobouton, faire la requete.
+        // A chaque changement de radiobouton, actualiser la liste.
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 if(checkedId==R.id.triNom){
-                    intRadio="0";
+                    intRadio=0;
                 }
 
                 if(checkedId==R.id.triDate){
-                    intRadio="1";
+                    intRadio=1;
                 }
 
                 if(checkedId==R.id.triStock){
-                    intRadio="2";
+                    intRadio=2;
                 }
 
                 if(checkedId==R.id.trihisto){
-                    intRadio="3";
+                    intRadio=3;
                 }
+
+                // On indique la condition de tri
+                for (Produit prod : arrayList){
+                    prod.setOrder(intRadio);
+                }
+                refreshList();
+
 
                 if(checkedId==R.id.triSuppr){
                     checkall();
                 }
-                sendData();
             }
         });
+
+        refreshList();
     }
+
+    /*
+    @Override
+    protected void onResume(){
+        // Récupération du tableau de produit
+        sendData();
+        refreshList();
+    }*/
 
 
     // méthodes
     public void checkall(){
+        int i;
+        for(i=0;i<nbre;i++){
+            checkBox[i].setChecked(true);
+        }
     }
 
     public void onClick(View v) {
 
-
         if (v.getId() == R.id.suppr) {
+
         }
 
     }
 
+    public void refreshList(){
+        // On trie la liste
+        Collections.sort(arrayList);
+        tableLayout.removeAllViews();
+        nbre=0;
+        for(Produit produit : arrayList){
+            if(rech!=null){
+                if(produit.getNom().startsWith(rech)) {
+                    createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
+                    nbre++;
+                }
+            }
+            else{
+                createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
+                nbre++;
+            }
+        }
+
+    }
 
     public void sendData(){
-        //array.clear();
-
+        arrayList.clear();
         JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.POST, REGISTER_URL, (String)null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -175,20 +207,21 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                         while(nbre<response.length()){
                             try {
                                 JSONObject jsonObject = response.getJSONObject(nbre);
+
                                 Produit produit = new Produit(jsonObject.getString("sProduct"),jsonObject.getString("sDate"),jsonObject.getString("sStock"),jsonObject.getString("sHisto"));
-                                createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
+                                //createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
                                 nbre++;
-                                //array.add(produit);
+                                arrayList.add(produit);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(ListeActivity.this,"Bonjouuuur",Toast.LENGTH_LONG).show();
                             }
                         }
 
                     }
                 }   ,
                 new Response.ErrorListener() {
+                    // The error is captured here.
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(ListeActivity.this,error.toString(),Toast.LENGTH_LONG).show();
@@ -198,7 +231,6 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
         );
         MySingleton.getInstance(ListeActivity.this).addToRequestQueue(jsonArrayRequest);
-
     }
 
 
@@ -230,6 +262,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
         // Création d'un Checkbox
         checkBox[nbre]= new CheckBox(this);
+
         tHisto.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
 
         tableRow.addView(tProduct);
