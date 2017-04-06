@@ -33,7 +33,7 @@
             android:text="Suppr" />
 
         <Button
-            android:id="@+id/recherche_recette"
+            android:id="@+id/consume"
             android:textSize="12dip"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="33"
-            android:text="recherche recette"
+            android:text="consommé"
             android:background="@drawable/button_shape" />
 
         <EditText

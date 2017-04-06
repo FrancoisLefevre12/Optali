@@ -16,9 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 
 import org.json.JSONArray;
@@ -27,16 +30,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String REGISTER_URL = "http://89.80.34.165/optali/get.php";
+    public static final String REGISTER_DELETE_URL = "http://89.80.34.165/optali/delete.php";
+    public static final String REGISTER_CONSUME_URL = "http://89.80.34.165/optali/consume.php";
+    public static final String KEY_PRODUCT = "Product";
+    public static final String KEY_DATE = "Date";
     public int nbre;
 
 
     private Button bSuppr;
-    private Button bFindRecipe;
+    private Button bConsume;
     private EditText eFindProduct;
 
     private RadioGroup radioGroup;
@@ -65,8 +74,8 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         // Initialisation buttons
         bSuppr = (Button) findViewById(R.id.suppr);
         bSuppr.setOnClickListener(this);
-        bFindRecipe = (Button) findViewById(R.id.recherche_recette);
-        bFindRecipe.setOnClickListener(this);
+        bConsume = (Button) findViewById(R.id.consume);
+        bConsume.setOnClickListener(this);
 
         // Initialisation EditText
         eFindProduct = (EditText) findViewById(R.id.recherche_produit);
@@ -148,16 +157,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        refreshList();
     }
-
-    /*
-    @Override
-    protected void onResume(){
-        // Récupération du tableau de produit
-        sendData();
-        refreshList();
-    }*/
 
 
     // méthodes
@@ -171,10 +171,60 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
 
         if (v.getId() == R.id.suppr) {
-
+            for(int i=0;i<nbre;i++){
+                if(checkBox[i].isChecked()) {
+                    delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_DELETE_URL);
+                }
+            }
+            sendData();
         }
 
+        if (v.getId() == R.id.consume) {
+            for(int i=0;i<nbre;i++){
+                if(checkBox[i].isChecked()) {
+                    if(arrayList.get(i).getStock().compareTo("0")>0){
+                        delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_CONSUME_URL);
+                    }
+
+                }
+            }
+            sendData();
+        }
+        refreshList();
     }
+
+    // Methode d'envoi de la date et du produit au server.
+    private void delete(String dnom, String ddate, String REGISTER) {
+        final String product = dnom;
+        final String date = ddate;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(ListeActivity.this,response,Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ListeActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put(KEY_PRODUCT,product);
+                params.put(KEY_DATE,date);
+                return params;
+            }
+
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+
 
     public void refreshList(){
         // On trie la liste
@@ -217,7 +267,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                                 e.printStackTrace();
                             }
                         }
-
+                        refreshList();
                     }
                 }   ,
                 new Response.ErrorListener() {
