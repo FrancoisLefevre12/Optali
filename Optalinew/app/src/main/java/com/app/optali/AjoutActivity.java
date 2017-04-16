@@ -107,8 +107,9 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
         }
 
         if(v.getId() == R.id.envoi_ajout){
-            if (EditTextProduct.getText().toString()==""){
-                Toast.makeText(AjoutActivity.this,"Veuillez rentrer votre nom de produit",Toast.LENGTH_LONG).show();
+            //Toast.makeText(AjoutActivity.this,EditTextProduct.getText().toString(),Toast.LENGTH_LONG).show();
+            if (EditTextProduct.getText()==null){
+                //Toast.makeText(AjoutActivity.this,"Veuillez rentrer votre nom de produit",Toast.LENGTH_LONG).show();
             }
             else{
                 sendData();
