@@ -4,3 +4,5 @@ Bienvenu dans le README de votre application mobile Optali.
 
 -Le dossier Optalinew contient l'application mobile Optali. Importez le dans un éditeur d'application android tel que Android studio pour executer le code sur un mobile.
 -Le dossier serveur concerne la raspberry. Il contient les fichiers php pour effectuer les requêtes sur la raspberry et le fichier texte de l'implantation de la base de donnée. On choisira MySql.
+-Le dossier Altium rassemble tous les fichiers réalisés sous Altium Designer qui ont servi à réaliser le PCB pour notre projet.
+-Le dossier RFduino contient le code utilisé sur notre contrôleur RFduino pour répondre au cahier des charges établi.
