@@ -62,7 +62,7 @@
             android:backgroundTint="@color/colorPrimary"
             android:layout_gravity="center"
             android:layout_weight="50"
-            android:hint="aaaa-mm-jj"
+            android:hint="jj/mm/aaaa"
             android:textSize="30dip" />
 
 

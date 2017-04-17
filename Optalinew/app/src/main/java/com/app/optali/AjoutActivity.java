@@ -34,7 +34,10 @@ import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -118,10 +121,20 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    public String translateDate(String d1){
+        SimpleDateFormat originalFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat finalFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date datef = new Date();
+        try {
+                datef = originalFormat.parse(d1);
+        }catch (java.text.ParseException e){}
+        return finalFormat.format(datef);
+    }
+
     // Methode d'envoi de la date et du produit au server.
     private void sendData() {
         final String product = EditTextProduct.getText().toString();
-        final String date = EditTextDate.getText().toString();
+        final String date = translateDate(EditTextDate.getText().toString());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
                 new Response.Listener<String>() {
