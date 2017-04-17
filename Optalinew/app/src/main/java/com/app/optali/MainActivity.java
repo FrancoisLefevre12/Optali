@@ -195,6 +195,13 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             @Override
             public void onClick(View v) {
 
+                // On récupère les données sur le singleton Etat
+                Etat etat = Etat.getInstance();
+                flag_empty=etat.getEmpty();
+                flag_perim=etat.getPerim();
+
+
+
                 if (flag_connect == true) {
                     iwLed1.setImageResource(R.drawable.green_circle);
                     twLed1.setText(R.string.SLedon);

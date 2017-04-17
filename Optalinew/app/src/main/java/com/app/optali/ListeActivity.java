@@ -1,9 +1,11 @@
 package com.app.optali;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,10 +30,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -41,6 +46,9 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     public static final String REGISTER_CONSUME_URL = "http://89.80.34.165/optali/consume.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
+    public static final String TAG = "ListeActivity.java";
+    public static final int SEUIL_NB_ALIM = 30;
+    public static final int SEUIL_NB_JOURS = 3;
     public int nbre;
 
 
@@ -243,7 +251,41 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                 nbre++;
             }
         }
+    }
 
+    // Méthode pour compter le nombre de jours entre 2 dates
+    public int daysBetween(Date d1, Date d2){
+        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    // Méthode de traitement de la liste des produits.
+    // Envoie true si un aliment est proche de périmer
+    // Envoie true si le frigo est vide ou bientôt vide
+    public void checkData(List<Produit> list){
+        int cpt=0;
+        Boolean perim=false;
+
+        Date now=new Date();
+        Date date = new Date(now.getTime());
+        Date dProd = null;
+        SimpleDateFormat textFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for(Produit prod : list){
+            cpt++;
+            try {
+                dProd =textFormat.parse(prod.getDate());
+            }catch (java.text.ParseException e){}
+            // debug
+            //Log.v(TAG,"now : "+date.toString()+", produit : "+dProd.toString()+ ", days between : "+daysBetween(date,dProd));
+
+            if(daysBetween(date,dProd)<SEUIL_NB_JOURS){
+                perim=true;
+            }
+        }
+
+        // On envoie les données sur le singleton Etat
+        Etat etat = Etat.getInstance();
+        etat.setEmpty(cpt<=SEUIL_NB_ALIM);
+        etat.setPerim(perim);
     }
 
     public void sendData(){
@@ -268,6 +310,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                             }
                         }
                         refreshList();
+                        checkData(arrayList);
                     }
                 }   ,
                 new Response.ErrorListener() {
