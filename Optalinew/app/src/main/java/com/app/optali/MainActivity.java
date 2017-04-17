@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.UUID;
 
@@ -186,6 +187,15 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         twLed3 = (TextView) findViewById(R.id.SLedPerim);
         twSpeaker = (TextView) findViewById(R.id.SSpeakerOn);
 
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                actualise();
+                handler.postDelayed(this, 1000);
+            }
+        }, 300);
+
 
 
         // Mise en place du bouton actualiser
@@ -194,56 +204,62 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
 
             @Override
             public void onClick(View v) {
-
-                // On récupère les données sur le singleton Etat
-                Etat etat = Etat.getInstance();
-                flag_empty=etat.getEmpty();
-                flag_perim=etat.getPerim();
-
-
-
-                if (flag_connect == true) {
-                    iwLed1.setImageResource(R.drawable.green_circle);
-                    twLed1.setText(R.string.SLedon);
-                }
-                else {
-                    iwLed1.setImageResource(R.drawable.grey_circle);
-                    twLed1.setText("");
-                }
-
-                 //Il faudra activer ou non ce flag via la base de données
-                if (flag_empty == true) {
-                    iwLed2.setImageResource(R.drawable.red_circle);
-                    twLed2.setText(R.string.SLedempty);
-                }
-                else {
-                    iwLed2.setImageResource(R.drawable.grey_circle);
-                    twLed2.setText("");
-                }
-
-                //Idem que pour flag_empty
-                if (flag_perim == true) {
-                    iwLed3.setImageResource(R.drawable.red_circle);
-                    twLed3.setText(R.string.SLedperim);
-                }
-                else {
-                    iwLed3.setImageResource(R.drawable.grey_circle);
-                    twLed3.setText("");
-                }
-
-
-                if (flag_porte == true) {
-                    iwSpeaker.setImageResource(R.drawable.speaker);
-                    twSpeaker.setText(R.string.SSpeaker);
-                }
-                else {
-                    iwSpeaker.setImageResource(R.drawable.speaker2);
-                    twSpeaker.setText("");
-                }
-
+                actualise();
             }
         });
 
+    }
+
+    public void actualise(){
+        // On récupère les données sur le singleton Etat
+        Etat.getInstance(MainActivity.this).sendData();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                flag_empty=Etat.getInstance(MainActivity.this).getEmpty();
+                flag_perim=Etat.getInstance(MainActivity.this).getPerim();
+            }
+        },300);
+
+        if (flag_connect == true) {
+            iwLed1.setImageResource(R.drawable.green_circle);
+            twLed1.setText(R.string.SLedon);
+        }
+        else {
+            iwLed1.setImageResource(R.drawable.grey_circle);
+            twLed1.setText("");
+        }
+
+        //Il faudra activer ou non ce flag via la base de données
+        if (flag_empty == true) {
+            iwLed2.setImageResource(R.drawable.red_circle);
+            twLed2.setText(R.string.SLedempty);
+        }
+        else {
+            iwLed2.setImageResource(R.drawable.grey_circle);
+            twLed2.setText("");
+        }
+
+        //Idem que pour flag_empty
+        if (flag_perim == true) {
+            iwLed3.setImageResource(R.drawable.red_circle);
+            twLed3.setText(R.string.SLedperim);
+        }
+        else {
+            iwLed3.setImageResource(R.drawable.grey_circle);
+            twLed3.setText("");
+        }
+
+
+        if (flag_porte == true) {
+            iwSpeaker.setImageResource(R.drawable.speaker);
+            twSpeaker.setText(R.string.SSpeaker);
+        }
+        else {
+            iwSpeaker.setImageResource(R.drawable.speaker2);
+            twSpeaker.setText("");
+        }
     }
 
     private final BroadcastReceiver bluetoothStateReceiver = new BroadcastReceiver() {

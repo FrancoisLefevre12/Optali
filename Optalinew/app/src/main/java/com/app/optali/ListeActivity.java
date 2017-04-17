@@ -1,12 +1,12 @@
 package com.app.optali;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -21,35 +21,25 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String REGISTER_URL = "http://89.80.34.165/optali/get.php";
+    public static final String TAG = "ListeActivity.java";
     public static final String REGISTER_DELETE_URL = "http://89.80.34.165/optali/delete.php";
     public static final String REGISTER_CONSUME_URL = "http://89.80.34.165/optali/consume.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
-    public static final String TAG = "ListeActivity.java";
-    public static final int SEUIL_NB_ALIM = 30;
-    public static final int SEUIL_NB_JOURS = 3;
+    public static final int REFRESH_TIME = 100;
     public int nbre;
+    private List<Produit> arrayList;
 
 
     private Button bSuppr;
@@ -69,14 +59,10 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     private TableLayout tableLayout;
     private CheckBox[] checkBox;
 
-    protected List<Produit> arrayList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_alim);
-
-        arrayList = new ArrayList<Produit>();
 
         nbre=0;
         // Initialisation buttons
@@ -108,9 +94,9 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         tableLayout = (TableLayout) findViewById(R.id.table);
         checkBox = new CheckBox[100];
 
-        // Récupération du tableau de produit
-        sendData();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        doAndRefresh();
 
         // A chaque changement de text, actualiser la liste
         eFindProduct.addTextChangedListener(new TextWatcher() {
@@ -169,6 +155,21 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
 
     // méthodes
+    public void doAndRefresh(){
+        // Récupération du tableau de produit
+        Etat.getInstance(ListeActivity.this).sendData();
+        this.arrayList=Etat.getInstance(ListeActivity.this).getList();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                // Après REFRESH_TIME millisecondes, on refresh la liste.
+                refreshList();
+            }
+        },REFRESH_TIME);
+    }
+
+
     public void checkall(){
         int i;
         for(i=0;i<nbre;i++){
@@ -184,7 +185,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                     delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_DELETE_URL);
                 }
             }
-            sendData();
+            doAndRefresh();
         }
 
         if (v.getId() == R.id.consume) {
@@ -196,10 +197,31 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
                 }
             }
-            sendData();
+            doAndRefresh();
         }
         refreshList();
     }
+
+
+    public void refreshList(){
+        // On trie la liste
+        Collections.sort(arrayList);
+        tableLayout.removeAllViews();
+        nbre=0;
+        for(Produit produit : arrayList){
+            if(rech!=null){
+                if(produit.getNom().startsWith(rech)) {
+                    createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
+                    nbre++;
+                }
+            }
+            else{
+                createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
+                nbre++;
+            }
+        }
+    }
+
 
     // Methode d'envoi de la date et du produit au server.
     private void delete(String dnom, String ddate, String REGISTER) {
@@ -228,104 +250,9 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
             }
 
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        RequestQueue requestQueue = Volley.newRequestQueue(ListeActivity.this);
         requestQueue.add(stringRequest);
     }
-
-
-
-    public void refreshList(){
-        // On trie la liste
-        Collections.sort(arrayList);
-        tableLayout.removeAllViews();
-        nbre=0;
-        for(Produit produit : arrayList){
-            if(rech!=null){
-                if(produit.getNom().startsWith(rech)) {
-                    createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
-                    nbre++;
-                }
-            }
-            else{
-                createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
-                nbre++;
-            }
-        }
-    }
-
-    // Méthode pour compter le nombre de jours entre 2 dates
-    public int daysBetween(Date d1, Date d2){
-        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
-    }
-
-    // Méthode de traitement de la liste des produits.
-    // Envoie true si un aliment est proche de périmer
-    // Envoie true si le frigo est vide ou bientôt vide
-    public void checkData(List<Produit> list){
-        int cpt=0;
-        Boolean perim=false;
-
-        Date now=new Date();
-        Date date = new Date(now.getTime());
-        Date dProd = null;
-        SimpleDateFormat textFormat = new SimpleDateFormat("yyyy-MM-dd");
-        for(Produit prod : list){
-            cpt++;
-            try {
-                dProd =textFormat.parse(prod.getDate());
-            }catch (java.text.ParseException e){}
-            // debug
-            //Log.v(TAG,"now : "+date.toString()+", produit : "+dProd.toString()+ ", days between : "+daysBetween(date,dProd));
-
-            if(daysBetween(date,dProd)<SEUIL_NB_JOURS){
-                perim=true;
-            }
-        }
-
-        // On envoie les données sur le singleton Etat
-        Etat etat = Etat.getInstance();
-        etat.setEmpty(cpt<=SEUIL_NB_ALIM);
-        etat.setPerim(perim);
-    }
-
-    public void sendData(){
-        arrayList.clear();
-        JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.POST, REGISTER_URL, (String)null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                    nbre=0;
-
-                        while(nbre<response.length()){
-                            try {
-                                JSONObject jsonObject = response.getJSONObject(nbre);
-
-                                Produit produit = new Produit(jsonObject.getString("sProduct"),jsonObject.getString("sDate"),jsonObject.getString("sStock"),jsonObject.getString("sHisto"));
-                                //createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
-                                nbre++;
-                                arrayList.add(produit);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        refreshList();
-                        checkData(arrayList);
-                    }
-                }   ,
-                new Response.ErrorListener() {
-                    // The error is captured here.
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(ListeActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
-                }
-
-        );
-        MySingleton.getInstance(ListeActivity.this).addToRequestQueue(jsonArrayRequest);
-    }
-
 
 
     public void createRow(String s1, String s2, String s3, String s4, int nbre){
