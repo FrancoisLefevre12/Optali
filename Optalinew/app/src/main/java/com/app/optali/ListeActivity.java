@@ -1,10 +1,12 @@
 package com.app.optali;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -19,16 +21,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,12 +32,14 @@ import java.util.Map;
 
 public class ListeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String REGISTER_URL = "http://89.80.34.165/optali/get.php";
+    public static final String TAG = "ListeActivity.java";
     public static final String REGISTER_DELETE_URL = "http://89.80.34.165/optali/delete.php";
     public static final String REGISTER_CONSUME_URL = "http://89.80.34.165/optali/consume.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
+    public static final int REFRESH_TIME = 300;
     public int nbre;
+    private List<Produit> arrayList;
 
 
     private Button bSuppr;
@@ -61,14 +59,10 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     private TableLayout tableLayout;
     private CheckBox[] checkBox;
 
-    protected List<Produit> arrayList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liste_alim);
-
-        arrayList = new ArrayList<Produit>();
 
         nbre=0;
         // Initialisation buttons
@@ -100,9 +94,9 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
         tableLayout = (TableLayout) findViewById(R.id.table);
         checkBox = new CheckBox[100];
 
-        // Récupération du tableau de produit
-        sendData();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        doAndRefresh();
 
         // A chaque changement de text, actualiser la liste
         eFindProduct.addTextChangedListener(new TextWatcher() {
@@ -161,6 +155,21 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
 
     // méthodes
+    public void doAndRefresh(){
+        // Récupération du tableau de produit
+        Etat.getInstance(ListeActivity.this).sendData();
+        this.arrayList=Etat.getInstance(ListeActivity.this).getList();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                // Après REFRESH_TIME millisecondes, on refresh la liste.
+                refreshList();
+            }
+        },REFRESH_TIME);
+    }
+
+
     public void checkall(){
         int i;
         for(i=0;i<nbre;i++){
@@ -176,54 +185,19 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                     delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_DELETE_URL);
                 }
             }
-            sendData();
         }
 
         if (v.getId() == R.id.consume) {
-            for(int i=0;i<nbre;i++){
-                if(checkBox[i].isChecked()) {
-                    if(arrayList.get(i).getStock().compareTo("0")>0){
-                        delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_CONSUME_URL);
+            for(int i=0;i<nbre;i++) {
+                if (checkBox[i].isChecked()) {
+                    if (arrayList.get(i).getStock().compareTo("0") > 0) {
+                        delete(arrayList.get(i).getNom(), arrayList.get(i).getDate(), REGISTER_CONSUME_URL);
                     }
 
                 }
             }
-            sendData();
         }
-        refreshList();
     }
-
-    // Methode d'envoi de la date et du produit au server.
-    private void delete(String dnom, String ddate, String REGISTER) {
-        final String product = dnom;
-        final String date = ddate;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(ListeActivity.this,response,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(ListeActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put(KEY_PRODUCT,product);
-                params.put(KEY_DATE,date);
-                return params;
-            }
-
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
-
 
 
     public void refreshList(){
@@ -243,46 +217,40 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                 nbre++;
             }
         }
-
     }
 
-    public void sendData(){
-        arrayList.clear();
-        JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.POST, REGISTER_URL, (String)null,
-                new Response.Listener<JSONArray>() {
+
+    // Methode d'envoi de la date et du produit au server.
+    private void delete(String dnom, String ddate, String REGISTER) {
+        final String product = dnom;
+        final String date = ddate;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONArray response) {
-                    nbre=0;
-
-                        while(nbre<response.length()){
-                            try {
-                                JSONObject jsonObject = response.getJSONObject(nbre);
-
-                                Produit produit = new Produit(jsonObject.getString("sProduct"),jsonObject.getString("sDate"),jsonObject.getString("sStock"),jsonObject.getString("sHisto"));
-                                //createRow(produit.getNom(),produit.getDate(),produit.getStock(),produit.getHistorique(),nbre);
-                                nbre++;
-                                arrayList.add(produit);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        refreshList();
+                    public void onResponse(String response) {
+                        Toast.makeText(ListeActivity.this,response,Toast.LENGTH_LONG).show();
+                        doAndRefresh();
                     }
-                }   ,
+                },
                 new Response.ErrorListener() {
-                    // The error is captured here.
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(ListeActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                        error.printStackTrace();
                     }
-                }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put(KEY_PRODUCT,product);
+                params.put(KEY_DATE,date);
+                return params;
+            }
 
-        );
-        MySingleton.getInstance(ListeActivity.this).addToRequestQueue(jsonArrayRequest);
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(ListeActivity.this);
+        requestQueue.add(stringRequest);
     }
-
 
 
     public void createRow(String s1, String s2, String s3, String s4, int nbre){
