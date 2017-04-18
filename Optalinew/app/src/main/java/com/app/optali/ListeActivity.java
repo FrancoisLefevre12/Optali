@@ -37,7 +37,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
     public static final String REGISTER_CONSUME_URL = "http://89.80.34.165/optali/consume.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
-    public static final int REFRESH_TIME = 100;
+    public static final int REFRESH_TIME = 300;
     public int nbre;
     private List<Produit> arrayList;
 
@@ -185,21 +185,18 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                     delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_DELETE_URL);
                 }
             }
-            doAndRefresh();
         }
 
         if (v.getId() == R.id.consume) {
-            for(int i=0;i<nbre;i++){
-                if(checkBox[i].isChecked()) {
-                    if(arrayList.get(i).getStock().compareTo("0")>0){
-                        delete(arrayList.get(i).getNom(),arrayList.get(i).getDate(),REGISTER_CONSUME_URL);
+            for(int i=0;i<nbre;i++) {
+                if (checkBox[i].isChecked()) {
+                    if (arrayList.get(i).getStock().compareTo("0") > 0) {
+                        delete(arrayList.get(i).getNom(), arrayList.get(i).getDate(), REGISTER_CONSUME_URL);
                     }
 
                 }
             }
-            doAndRefresh();
         }
-        refreshList();
     }
 
 
@@ -233,6 +230,7 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(ListeActivity.this,response,Toast.LENGTH_LONG).show();
+                        doAndRefresh();
                     }
                 },
                 new Response.ErrorListener() {

@@ -25,7 +25,7 @@
         android:orientation="horizontal"
         android:layout_margin="30dp">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/code_barre"
             android:backgroundTint="@color/colorPrimary"
             android:layout_width="wrap_content"
@@ -33,7 +33,10 @@
             android:layout_gravity="center"
             android:layout_weight="50"
             android:hint="Produit"
-            android:textSize="30dip" />
+            android:textSize="30dip"
+            android:isScrollContainer="true"
+            android:maxLines="3"
+            />
 
 
         <Button

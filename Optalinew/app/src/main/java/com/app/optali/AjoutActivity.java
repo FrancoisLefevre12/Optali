@@ -1,10 +1,13 @@
 package com.app.optali;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,8 +38,10 @@ import com.android.volley.toolbox.StringRequest;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -46,14 +51,17 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
     public static final String REGISTER_URL = "http://89.80.34.165/optali/post.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
+    public List<String> ListProd;// = new String[] {"Pate","Rilandreux","Rizoto","Ritournelle","Riz"};
 
 
     private Button scan;
     private Button scan2;
     private Button send;
     private boolean switchCam;
+    private List<Produit> ListTemp;
 
-    private EditText EditTextProduct;
+    //private EditText EditTextProduct;
+    private AutoCompleteTextView EditTextProduct;
     private EditText EditTextDate;
     // Quand false alors appel à la première caméra sinon la deuxième
 
@@ -83,8 +91,13 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
         send=(Button)findViewById(R.id.envoi_ajout);
         send.setOnClickListener(this);
 
-        EditTextProduct = (EditText) findViewById(R.id.code_barre);
+        //EditTextProduct = (EditText) findViewById(R.id.code_barre);
         EditTextDate = (EditText) findViewById(R.id.date_etiquette);
+        EditTextProduct = (AutoCompleteTextView) findViewById(R.id.code_barre);
+
+        initDropDownList();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, ListProd);
+        EditTextProduct.setAdapter(adapter);
 
         runFile();
 
@@ -112,13 +125,29 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
         if(v.getId() == R.id.envoi_ajout){
             //Toast.makeText(AjoutActivity.this,EditTextProduct.getText().toString(),Toast.LENGTH_LONG).show();
             if (EditTextProduct.getText()==null){
-                //Toast.makeText(AjoutActivity.this,"Veuillez rentrer votre nom de produit",Toast.LENGTH_LONG).show();
+                Toast.makeText(AjoutActivity.this,"Veuillez rentrer votre nom de produit",Toast.LENGTH_LONG).show();
             }
             else{
                 sendData();
             }
         }
 
+    }
+
+    public void initDropDownList(){
+        ListProd = new ArrayList<String>();
+
+        Etat.getInstance(AjoutActivity.this).sendData();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                ListTemp=Etat.getInstance(AjoutActivity.this).getList();
+                for(Produit p : ListTemp){
+                    ListProd.add(p.getNom());
+                }
+            }
+        },300);
     }
 
     public String translateDate(String d1){
@@ -141,6 +170,7 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(AjoutActivity.this,response,Toast.LENGTH_LONG).show();
+                        initDropDownList();
                     }
                 },
                 new Response.ErrorListener() {
