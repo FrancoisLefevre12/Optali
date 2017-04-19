@@ -33,7 +33,6 @@ import java.util.List;
 @TargetApi(18)
 public class MainActivity extends AppCompatActivity implements BluetoothAdapter.LeScanCallback {
 
-    private Boolean beTheLight;
     ImageView iwLed1;
     ImageView iwLed2;
     ImageView iwLed3;
@@ -56,7 +55,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
     private boolean scanStarted;
     private boolean scanning;
 
-    private boolean flag_connect=false,flag_perim=false,flag_empty=false,flag_porte=false;
+    private boolean flag_connect=false;
+    private boolean flag_perim=false;
+    private boolean flag_empty=false;
+    private boolean flag_porte=false;
+    private boolean connected = false;
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothDevice bluetoothDevice;
@@ -65,8 +68,9 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
 
     private Button enableBluetoothButton;
     private TextView scanStatusText;
+    private TextView connectionStatusText;
     private Button scanButton;
-    private Button sendValueButton;
+    //private Button sendValueButton;
 
 
 
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
 
         // Find and Connect Device
         scanStatusText = (TextView) findViewById(R.id.scanStatus);
+        connectionStatusText = (TextView) findViewById(R.id.connectionStatus);
 
         scanButton = (Button) findViewById(R.id.scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -114,19 +119,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
 
 
 
-     /*   // Connect Device
-        connectionStatusText = (TextView) findViewById(R.id.connectionStatus);
-
-        connectButton = (Button) findViewById(R.id.connect);
-        connectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setEnabled(false);
-                connectionStatusText.setText("Connecting...");
-            }
-        });
-*/
-
         /* // Send
         valueEdit = (EditData) findViewById(R.id.value);
         valueEdit.setImeOptions(EditorInfo.IME_ACTION_SEND);
@@ -141,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             }
         });
 */
-        
+      /*
         sendValueButton = (Button) findViewById(R.id.sendValue);
         sendValueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             }
         });
 
-
+*/
 
         // Mise en place du bouton ajout page
         Button buttonAjout = (Button) findViewById(R.id.ajoutPage);
@@ -211,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
     }
 
     public void actualise(){
+
         // On récupère les données sur le singleton Etat
         Etat.getInstance(MainActivity.this).sendData();
         final Handler handler = new Handler();
@@ -231,24 +224,26 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             twLed1.setText("");
         }
 
-        //Il faudra activer ou non ce flag via la base de données
         if (flag_empty == true) {
             iwLed2.setImageResource(R.drawable.red_circle);
             twLed2.setText(R.string.SLedempty);
+            if (connected) rfduinoService.send("Vide".getBytes());
         }
         else {
             iwLed2.setImageResource(R.drawable.grey_circle);
             twLed2.setText("");
+            if (connected) rfduinoService.send("Plein".getBytes());
         }
 
-        //Idem que pour flag_empty
         if (flag_perim == true) {
             iwLed3.setImageResource(R.drawable.red_circle);
             twLed3.setText(R.string.SLedperim);
+            if (connected) rfduinoService.send("Perim".getBytes());
         }
         else {
             iwLed3.setImageResource(R.drawable.grey_circle);
             twLed3.setText("");
+            if (connected) rfduinoService.send("NotPerim".getBytes());
         }
 
 
@@ -381,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         }
 
         // Connect
-        boolean connected = false;
+
         String connectionText = "Disconnected";
         if (state == STATE_CONNECTING) {
             connectionText = "Connecting...";
@@ -392,11 +387,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             scanButton.setEnabled(false);
             connectionText = "Connected";
         }
-       // connectionStatusText.setText(connectionText);
-       // connectButton.setEnabled(bluetoothDevice != null && state == STATE_DISCONNECTED);
 
-        sendValueButton.setEnabled(connected);
-
+       connectionStatusText.setText(connectionText);
     }
 
 

@@ -72,7 +72,7 @@
 
         <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="100dp">
+            android:layout_height="130dp">
             <LinearLayout
                 android:id="@+id/notif_scroll_view"
                 android:layout_width="match_parent"
@@ -84,9 +84,7 @@
                     android:id="@+id/SLedOn"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="20dp"
                     android:textColor="#00FF00"
-                    android:textStyle="bold"
                     android:orientation="vertical">
                 </TextView>
 
@@ -94,8 +92,6 @@
                     android:id="@+id/SLedPerim"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
                     android:textColor="#ff0000"
                     android:orientation="vertical">
                 </TextView>
@@ -104,8 +100,6 @@
                     android:id="@+id/SLedEmpty"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
                     android:textColor="#ff0000"
                     android:orientation="vertical">
                 </TextView>
@@ -114,8 +108,6 @@
                     android:id="@+id/SSpeakerOn"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
                     android:textColor="#ff0000"
                     android:orientation="vertical">
                 </TextView>
@@ -126,7 +118,7 @@
         <LinearLayout
 
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="40dp">
 
             <TextView android:id="@+id/scanStatus"
                 android:layout_width="wrap_content"
@@ -150,8 +142,8 @@
             <Button
                 android:id="@+id/enableBluetooth"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_width="40dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="90dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:text="BT"
@@ -159,22 +151,14 @@
 
             <Button
                 android:id="@+id/scan"
-                android:layout_marginRight="10dp"
-                android:layout_width="60dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="90dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:text="Scan"
                 android:background="@drawable/button_shape"/>
 
 
-            <Button
-                android:id="@+id/sendValue"
-                android:layout_marginRight="10dp"
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:text="Send"
-                android:background="@drawable/button_shape"/>
 
             <ImageView
                 android:id="@+id/notOn"
