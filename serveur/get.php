@@ -1,5 +1,3 @@
-<!-- Création de la page d'insertion d'aliments -->
-
 <?php
 
 require "init.php";
@@ -15,8 +13,6 @@ array_push($response,array("sProduct"=>$row["Product"],"sDate"=>$row["Date"],"sS
 }
 
 echo json_encode($response);
-
-echo '<br>Requete bien envoyée!!';
 
 mysqli_close($con);
 

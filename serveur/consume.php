@@ -1,11 +1,10 @@
 <?php
 
 require "init.php";
-echo 'Produit bien ajouté!!';
+echo 'Votre aliment a bien été enregistré comme étant consommé!!';
 
 $Product=$_POST['Product'];
 $Date=$_POST['Date'];
-
 
 
 // ---------------------------------------------------- \\
@@ -17,16 +16,13 @@ $result= mysqli_query($con,$sql);
 if(mysqli_num_rows($result)>0)
 {
 
-	//On augmente le nombre de ce produit dans le frigo
-	$sql="UPDATE Product SET NbProdIn = NbProdIn+1 WHERE Product='".$Product."';";
+	//On diminue le nombre de ce produit dans le frigo
+	$sql="UPDATE Product SET NbProdIn = NbProdIn-1 WHERE Product='".$Product."';";
 	$result= mysqli_query($con,$sql);
 
-	$sql="UPDATE Product SET NbProdBought = NbProdBought+1 WHERE Product='".$Product."';";
-	$result= mysqli_query($con,$sql);
 }
 else {
-	$sql="insert into Product (Product, NbProdIn, NbProdBought) values('".$Product."','1','1');";
-	$result= mysqli_query($con,$sql);
+	// Sinon on fait rien
 }
 
 
@@ -36,15 +32,14 @@ else {
 $sql="SELECT * FROM Date where Date='".$Date."';";
 $result= mysqli_query($con,$sql);
 
-// Si la date existe déjà, on ajoute +1 à NbDate
+// Si la date existe déjà, on diminue 1 à NbDate
 if(mysqli_num_rows($result)>0)
 {
-	$sql="UPDATE Date SET NbDate = NbDate+1 WHERE Date='".$Date."';";
+	$sql="UPDATE Date SET NbDate = NbDate-1 WHERE Date='".$Date."';";
 	$result= mysqli_query($con,$sql);
 }
 else {
-	$sql="insert into Date (Date) values('".$Date."');";
-	$result= mysqli_query($con,$sql);
+	// On do rien
 }
 
 
@@ -67,13 +62,12 @@ $result= mysqli_query($con,$sql);
 
 if(mysqli_num_rows($result)>0)
 {
-	$sql="UPDATE Unity SET NbUnity = NbUnity+1 WHERE (IdDate='".$IdDate."' AND IdProduct='".$IdProduct."');";
+	$sql="UPDATE Unity SET NbUnity = NbUnity-1 WHERE (IdDate='".$IdDate."' AND IdProduct='".$IdProduct."');";
 	$result= mysqli_query($con,$sql);
 }
 else
 {
-	$sql="insert into Unity (idDate,idProduct,NbUnity) values('".$IdDate."','".$IdProduct."','1');";
-	$result= mysqli_query($con,$sql);
+	// On fait rien!
 }
 
 

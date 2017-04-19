@@ -67,6 +67,7 @@ insert into Date (Date) values('2017-04-15');
 insert into Product (Product, NbProdIn, NbProdBought) values('Salade','1','1');
 insert into Unity (idDate,idProduct,NbUnity) values(1,1,1);
 insert into Recipe (Recipe) values ('Pate à la salade');
+insert into ListProduct (IdRecipe,IdProduct) values('1','19');
 
 UPDATE Product SET NbProdIn = NbProdIn+1 WHERE Product='Riz';
 
