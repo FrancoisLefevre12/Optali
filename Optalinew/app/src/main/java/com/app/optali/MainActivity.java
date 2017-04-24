@@ -191,12 +191,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
 
 
         // Mise en place du bouton actualiser
-        Button buttonActu = (Button) findViewById(R.id.actualiser);
-        buttonActu.setOnClickListener(new View.OnClickListener() {
-
+        Button buttonRecette = (Button) findViewById(R.id.recette);
+        buttonRecette.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actualise();
+                // A rediriger vers une page recette.
             }
         });
 

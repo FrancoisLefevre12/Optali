@@ -100,7 +100,7 @@ public class Etat {
         Date dProd = null;
         SimpleDateFormat textFormat = new SimpleDateFormat("yyyy-MM-dd");
         for(Produit prod : list){
-            cpt++;
+            cpt+=Integer.parseInt(prod.getStock());
             try {
                 dProd =textFormat.parse(prod.getDate());
             }catch (java.text.ParseException e){}
