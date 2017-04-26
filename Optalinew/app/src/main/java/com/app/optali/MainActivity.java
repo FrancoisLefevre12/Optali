@@ -195,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         buttonRecette.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // A rediriger vers une page recette.
+                Intent i = new Intent(getApplicationContext(), ListeRecette.class);
+                startActivity(i);
             }
         });
 
