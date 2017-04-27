@@ -72,7 +72,10 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
     private Button scanButton;
     //private Button sendValueButton;
 
-
+    private Handler handler1;
+    private Handler handler2;
+    private Runnable runnable1;
+    private Runnable runnable2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,14 +182,15 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         twLed3 = (TextView) findViewById(R.id.SLedPerim);
         twSpeaker = (TextView) findViewById(R.id.SSpeakerOn);
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        handler1 = new Handler();
+        runnable1 = new Runnable() {
             @Override
             public void run() {
                 actualise();
-                handler.postDelayed(this, 1000);
+                handler1.postDelayed(this, 1000);
             }
-        }, 300);
+        };
+        handler1.postDelayed(runnable1,500);
 
 
 
@@ -202,18 +206,20 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
 
     }
 
+
     public void actualise(){
 
         // On récupère les données sur le singleton Etat
         Etat.getInstance(MainActivity.this).sendData();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable(){
+        handler2 = new Handler();
+        runnable2 = new Runnable(){
             @Override
             public void run(){
                 flag_empty=Etat.getInstance(MainActivity.this).getEmpty();
                 flag_perim=Etat.getInstance(MainActivity.this).getPerim();
             }
-        },300);
+        };
+        handler2.postDelayed(runnable2,500);
 
         if (flag_connect == true) {
             iwLed1.setImageResource(R.drawable.green_circle);
@@ -322,6 +328,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         registerReceiver(rfduinoReceiver, RFduinoService.getIntentFilter());
 
         updateState(bluetoothAdapter.isEnabled() ? STATE_DISCONNECTED : STATE_BLUETOOTH_OFF);
+
+        handler1 = new Handler();
+        handler1.post(runnable1);
+        handler2 = new Handler();
+        handler2.post(runnable2);
     }
 
 
@@ -334,6 +345,9 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         unregisterReceiver(scanModeReceiver);
         unregisterReceiver(bluetoothStateReceiver);
         unregisterReceiver(rfduinoReceiver);
+
+        handler1.removeCallbacks(runnable1);
+        handler2.removeCallbacks(runnable2);
     }
 
     private void upgradeState(int newState) {

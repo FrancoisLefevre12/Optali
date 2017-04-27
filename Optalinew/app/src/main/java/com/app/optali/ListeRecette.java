@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 public class ListeRecette extends AppCompatActivity {
 
-    public static final String REGISTER_CONSUME_URL = "http://89.80.34.165/optali/listeRecette.php";
+    public static final String REGISTER_RECIPE_URL = "http://89.80.34.165/optali/listeRecette.php";
     public static final String[] listString = {"Jean","Pierre","Pascal"};
     public static final String[] listRecettes = {"Gateau au chocolat","Lasagne","Pizza"};
     private Button bSuppr;
@@ -61,7 +61,6 @@ public class ListeRecette extends AppCompatActivity {
                                                 ViewGroup viewGroup= (ViewGroup) view;
                                                 TextView txt = (TextView) viewGroup.findViewById(R.id.textItem);
                                                 Toast.makeText(ListeRecette.this,txt.getText().toString(),Toast.LENGTH_LONG).show();
-
                                             }
                                         });
 
