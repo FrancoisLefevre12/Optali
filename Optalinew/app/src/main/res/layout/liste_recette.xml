@@ -95,11 +95,12 @@
         android:scrollbarStyle="insideOverlay">
 
         <TableLayout
-            android:id="@+id/table"
+            android:id="@+id/tableRecette"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:stretchColumns="*"
             android:shrinkColumns="*"
+            android:onClick="showDialogListView"
             android:layout_margin="5dp">
         </TableLayout>
 
