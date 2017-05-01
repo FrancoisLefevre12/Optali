@@ -23,17 +23,17 @@ public class Etat {
     public static final int SEUIL_NB_ALIM = 30;
     public static final int SEUIL_NB_JOURS = 3;
 
-    private Boolean perim;
+    private Boolean perime;
     private Boolean empty;
     private List<Produit> arrayList;
     private int nbre;
     private static Etat mEtat;
     private static Context context;
 
-    public Boolean getPerim() {return perim;}
+    public Boolean getPerim() {return perime;}
     public Boolean getEmpty() {return empty;}
     public List<Produit> getList() {return arrayList;}
-    public void setPerim(Boolean perim) {this.perim = perim;}
+    public void setPerim(Boolean perim) {this.perime = perim;}
     public void setEmpty(Boolean empty) {this.empty = empty;}
 
     private Etat(Context context){
@@ -93,7 +93,7 @@ public class Etat {
     // Envoie true si le frigo est vide ou bientôt vide
     public void checkData(List<Produit> list){
         int cpt=0;
-        Boolean perim=false;
+        Boolean IsPerim=false;
 
         Date now=new Date();
         Date date = new Date(now.getTime());
@@ -104,14 +104,15 @@ public class Etat {
             try {
                 dProd =textFormat.parse(prod.getDate());
             }catch (java.text.ParseException e){}
+
             if(daysBetween(date,dProd)<SEUIL_NB_JOURS){
-                perim=true;
+                IsPerim=true;
             }
         }
 
         // On envoie les données sur le singleton Etat
         this.setEmpty(cpt<=SEUIL_NB_ALIM);
-        this.setPerim(perim);
+        this.setPerim(IsPerim);
     }
 
     // Méthode pour compter le nombre de jours entre 2 dates
