@@ -201,6 +201,13 @@ public class ListeActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void refreshList(){
+
+        // On remplace les produits utilisés par des symboles de vide au niveau des dates
+        for(Produit produit : arrayList){
+            if(Integer.parseInt(produit.getStock())<=0){
+                produit.setDate("Pas de Date");
+            }
+        }
         // On trie la liste
         Collections.sort(arrayList);
         tableLayout.removeAllViews();

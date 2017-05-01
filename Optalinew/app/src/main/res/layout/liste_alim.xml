@@ -62,7 +62,7 @@
         android:layout_height="40dip"
         android:layout_marginTop="20dp"
         android:id="@+id/rdGroup"
-        android:checkedButton="@+id/triNom"
+        android:checkedButton="@+id/triDate"
         android:orientation="horizontal">
 
         <RadioButton
