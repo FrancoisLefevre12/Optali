@@ -37,13 +37,19 @@ void setup() {
   //Initialisation des pins
   pinMode(PERIM_LED,OUTPUT); 
   pinMode(EMPTY_LED,OUTPUT);  
-  pinMode(PIN_BUZZER,OUTPUT);  
+  //pinMode(PIN_BUZZER,OUTPUT);  
 
   init_BLE(); 
   //init_Accelero();
 }
 
-
+/* La partie s'occupant du traitement de l'accéléromètre
+ et du buzzer lorsque la porte s'ouvre n'est pas utilisée
+ dans notre programme suite au non-fonctionnement de notre 
+ accéléro. Cependant, nous laissons la manière dont nous 
+ l'aurions indenté.  
+ */
+ 
 void loop() 
 {
   // switch to lower power mode
@@ -58,15 +64,15 @@ void loop()
   }
 
   //lecture_Accelero();
-
+ 
   //Envoi d'un avertissement d'ouverture du frigo à l'appli
-  if (ouverture(AccX,AccY,AccZ)) {
+ /* if (ouverture(AccX,AccY,AccZ)) {
     send_BLE("Open",strlen("Open"));
     Buzzer();
   }
   else {
     send_BLE("Close",strlen("Close"));
-  }
+  } */
 
 }
 
@@ -198,26 +204,25 @@ void RFduinoBLE_onDisconnect()
 //Actions à réaliser lors de la réception de données
 void RFduinoBLE_onReceive(char* data,int len)
 {
-  if (strstr(data,"coucou") != NULL)
-  {  
-    Serial.println("Récupération des données effectuée");
-    Serial.println("Envoi de la réponse");
-  }
-
   if (strstr(data,"Perim") != NULL) {
     digitalWrite(PERIM_LED,HIGH);
+    Serial.println("Perim "+digitalRead(PERIM_LED));
   }
 
-  if (strstr(data,"NotPerim") != NULL) {
+  if (strstr(data,"Sain") != NULL) {
     digitalWrite(PERIM_LED,LOW);
+    Serial.println("Sain "+digitalRead(PERIM_LED));
   }
 
   if (strstr(data,"Vide") != NULL) {
     digitalWrite(EMPTY_LED,HIGH);
+    Serial.println("Vide "+digitalRead(EMPTY_LED));
+
   }
 
   if (strstr(data,"Plein") != NULL) {
     digitalWrite(EMPTY_LED,LOW);
+    Serial.println("Plein "+digitalRead(EMPTY_LED));
   }  
 }
 

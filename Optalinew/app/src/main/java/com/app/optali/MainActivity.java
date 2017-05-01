@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
     private TextView scanStatusText;
     private TextView connectionStatusText;
     private Button scanButton;
-    //private Button sendValueButton;
 
     private Handler handler1;
     private Handler handler2;
@@ -249,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         else {
             iwLed3.setImageResource(R.drawable.grey_circle);
             twLed3.setText("");
-            if (connected) rfduinoService.send("NotPerim".getBytes());
+            if (connected) rfduinoService.send("Sain".getBytes());
         }
 
 
