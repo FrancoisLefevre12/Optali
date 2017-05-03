@@ -27,11 +27,10 @@ int flag_connect = false;
 int flag_open = false;
 
 
-
 void setup() {
 
   //On utilise l'affichage série pour débugger
-  Serial.begin(9600);
+  Serial.begin(9600,PIN_BUZZER,PIN_INT1);
   Serial.println("Serial rate set to 9600 baud");
 
   //Initialisation des pins
@@ -203,10 +202,10 @@ void RFduinoBLE_onDisconnect()
 
 //Actions à réaliser lors de la réception de données
 void RFduinoBLE_onReceive(char* data,int len)
-{
+{ 
   if (strstr(data,"Perim") != NULL) {
-    digitalWrite(PERIM_LED,HIGH);
-    Serial.println("Perim "+digitalRead(PERIM_LED));
+      digitalWrite(PERIM_LED,HIGH);
+      Serial.println("Perim "+digitalRead(PERIM_LED));
   }
 
   if (strstr(data,"Sain") != NULL) {
