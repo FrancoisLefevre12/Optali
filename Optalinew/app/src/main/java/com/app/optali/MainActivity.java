@@ -3,6 +3,7 @@ package com.app.optali;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
     final private static int STATE_DISCONNECTED = 2;
     final private static int STATE_CONNECTING = 3;
     final private static int STATE_CONNECTED = 4;
+    public static final String TAG = "MainActivity.java";
 
     private int state;
 
@@ -105,9 +107,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             @Override
             public void onClick(View v) {
                 scanStarted = true;
+
                 bluetoothAdapter.startLeScan(
-                        new UUID[]{ RFduinoService.UUID_SERVICE },
-                        MainActivity.this);
+                         new UUID[]{ RFduinoService.UUID_SERVICE },
+                         MainActivity.this);
+
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -119,32 +123,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             }
         });
 
-
-
-        /* // Send
-        valueEdit = (EditData) findViewById(R.id.value);
-        valueEdit.setImeOptions(EditorInfo.IME_ACTION_SEND);
-        valueEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendValueButton.callOnClick();
-                    return true;
-                }
-                return false;
-            }
-        });
-*/
-      /*
-        sendValueButton = (Button) findViewById(R.id.sendValue);
-        sendValueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rfduinoService.send("coucou".getBytes());
-            }
-        });
-
-*/
 
         // Mise en place du bouton ajout page
         Button buttonAjout = (Button) findViewById(R.id.ajoutPage);
@@ -186,10 +164,10 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
             @Override
             public void run() {
                 actualise();
-                handler1.postDelayed(this, 1000);
+                handler1.postDelayed(this, 2000);
             }
         };
-        handler1.postDelayed(runnable1,500);
+        handler1.postDelayed(runnable1,800);
 
 
 
@@ -214,8 +192,13 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         runnable2 = new Runnable(){
             @Override
             public void run(){
-                flag_empty=Etat.getInstance(MainActivity.this).getEmpty();
-                flag_perim=Etat.getInstance(MainActivity.this).getPerim();
+                try {
+                    flag_empty = Etat.getInstance(MainActivity.this).getEmpty();
+                    flag_perim = Etat.getInstance(MainActivity.this).getPerim();
+                }
+                catch(NullPointerException e){
+                    Toast.makeText(MainActivity.this,"Veuillez vérifier votre connection internet...",Toast.LENGTH_LONG).show();
+                }
             }
         };
         handler2.postDelayed(runnable2,500);
@@ -289,8 +272,15 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         public void onServiceConnected(ComponentName name, IBinder service) {
             rfduinoService = ((RFduinoService.LocalBinder) service).getService();
             if (rfduinoService.initialize()) {
-                if (rfduinoService.connect(bluetoothDevice.getAddress())) {
-                    upgradeState(STATE_CONNECTING);
+                try {
+                    // On obtient null ici... (sur 1 portable sur 2, appareillage?)
+                    String address = bluetoothDevice.getAddress();
+                    if (rfduinoService.connect(address)) {
+                        upgradeState(STATE_CONNECTING);
+                    }
+                }
+                catch(NullPointerException e){
+                    Log.d(TAG,"Connection à l'OptaliBox a échoué, pas de service bluetooth détecté!");
                 }
             }
         }
@@ -338,7 +328,16 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
     @Override
     protected void onStop() {
         super.onStop();
+        stop();
+    }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        updateUi();
+    }
+
+    public void stop(){
         bluetoothAdapter.stopLeScan(this);
 
         unregisterReceiver(scanModeReceiver);
@@ -389,7 +388,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothAdapter.
         }
 
         // Connect
-
         String connectionText = "Disconnected";
         if (state == STATE_CONNECTING) {
             connectionText = "Connecting...";

@@ -51,7 +51,7 @@ public class AjoutActivity extends AppCompatActivity implements View.OnClickList
     public static final String REGISTER_URL = "http://89.80.34.165/optali/post.php";
     public static final String KEY_PRODUCT = "Product";
     public static final String KEY_DATE = "Date";
-    public List<String> ListProd;// = new String[] {"Pate","Rilandreux","Rizoto","Ritournelle","Riz"};
+    public List<String> ListProd;
 
 
     private Button scan;
