@@ -1,5 +1,6 @@
 <?php
 
+//Merci à Prabeesh pour son tuto sur php et volley
 //Page d'accès à la database 
 // Wow wow wow toutes les erreurs sont dans /var/log/apache2/error.log
 
